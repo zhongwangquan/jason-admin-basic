@@ -1,12 +1,12 @@
 import axios from './axios'
 
-export const login = () => {
+export const login = (userInfo) => {
   return axios({
     url: '/api/login',
     method: 'get',
     params: {
-      username: 'admin',
-      age: 123
+      account: JSON.parse(userInfo).account,
+      password: JSON.parse(userInfo).password
     }
   })
 }

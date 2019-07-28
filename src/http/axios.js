@@ -76,7 +76,7 @@ export default function $axios(options) {
         if (response.data == undefined) {
           data = JSON.parse(response.request.responseText)
         } else {
-          data = response.data
+          data = response
         }
 
         // 根据返回的code值来做不同的处理
