@@ -1,48 +1,62 @@
 <template>
-    <el-row class="container">
-        <el-col :span="24" class="header">
-            <el-col :span="5" class="logo" :class="isCollapse?'logo-collapse-width':'logo-width'">
-        <img :src="this.logo" /> {{isCollapse?sysName:sysName}}
-            </el-col>
-            <el-col :span="1">
-                <div class="tools" @click.prevent="collapse">
-                    <i class="el-icon-menu"></i>
-                </div>
-                    <!-- <i class="fa fa-align-justify"></i> -->
-            </el-col>
-            <el-col :span="13">
-                <div class="hearNavBar">
-          <el-menu :default-active="activeIndex" class="el-menu-demo" background-color="#4b5f6e" text-color="#fff"
-              active-text-color="#ffd04b" mode="horizontal" @select="handleSelectHearNavBar">
-            <el-menu-item index="1">首页</el-menu-item>
-            <el-menu-item index="2">消息中心</el-menu-item>
-            <el-menu-item index="3">订单管理</el-menu-item>
-          </el-menu>
-                </div>
-            </el-col>
-            <el-col :span="5" class="userinfo">
-                <el-dropdown trigger="hover">
-                    <span class="el-dropdown-link userinfo-inner"><img :src="this.userAvatar" /> {{username}}</span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>我的消息</el-dropdown-item>
-                        <el-dropdown-item>设置</el-dropdown-item>
-                        <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-            </el-col>
+  <el-row class="container">
+    <el-col :span="24" class="header">
+        <el-col :span="5" class="logo" :class="isCollapse?'logo-collapse-width':'logo-width'">
+          <img :src="this.logo" /> {{isCollapse?sysName:sysName}}
         </el-col>
-        <el-col :span="24" class="main">
-            <aside class="aside">
-                <!--导航菜单-->
-        <el-menu default-active="1-3" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect" :collapse="isCollapse">
+        <el-col :span="1">
+            <div class="tools" @click.prevent="collapse">
+                <i class="el-icon-menu"></i>
+            </div>
+            <!-- <i class="fa fa-align-justify"></i> -->
+        </el-col>
+        <el-col :span="13">
+            <div class="hearNavBar">
+              <el-menu
+                  :default-active="activeIndex"
+                  class="el-menu-demo"
+                  background-color="#4b5f6e"
+                  text-color="#fff"
+                  active-text-color="#ffd04b"
+                  mode="horizontal"
+                  @select="handleSelectHearNavBar">
+                <el-menu-item index="1">首页</el-menu-item>
+                <el-menu-item index="2">消息中心</el-menu-item>
+                <el-menu-item index="3">订单管理</el-menu-item>
+              </el-menu>
+            </div>
+        </el-col>
+        <el-col :span="5" class="userinfo">
+            <el-dropdown trigger="hover" @command="handleCommand">
+                <span class="el-dropdown-link userinfo-inner">
+                  中文<i class='el-icon-arrow-right'/>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command='zh'>中文</el-dropdown-item>
+                    <el-dropdown-item command='en'>English</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
+            <el-dropdown trigger="hover">
+                <span class="el-dropdown-link userinfo-inner"><img :src="this.userAvatar" /> {{username}}</span>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item>我的消息</el-dropdown-item>
+                    <el-dropdown-item>设置</el-dropdown-item>
+                    <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
+        </el-col>
+    </el-col>
+    <el-col :span="24" class="main">
+      <aside class="aside">
+        <!--侧边栏菜单-->
+        <el-menu default-active="1-1" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect" :collapse="isCollapse">
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span slot="title">导航一</span>
+              <span slot="title">系统管理</span>
             </template>
-            <el-menu-item index="1-1">选项1</el-menu-item>
-            <el-menu-item index="1-2">选项2</el-menu-item>
-            <el-menu-item index="1-3">选项3</el-menu-item>
+            <el-menu-item index="1-1" @click="$router.push('user')">{{$t('sys.userMng')}}</el-menu-item>
+            <el-menu-item index="1-2" @click="$router.push('menu')">{{$t('sys.menuMng')}}</el-menu-item>
           </el-submenu>
           <el-menu-item index="2">
             <i class="el-icon-menu"></i>
@@ -57,25 +71,25 @@
             <span slot="title">导航四</span>
           </el-menu-item>
         </el-menu>
-            </aside>
-            <section class="content-container">
-                <div class="grid-content bg-purple-light">
-                    <el-col :span="24" class="breadcrumb-container">
-                        <el-breadcrumb separator="/" class="breadcrumb-inner">
-                            <el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
-                                {{ item.name }}
-                            </el-breadcrumb-item>
-                        </el-breadcrumb>
-                    </el-col>
-                    <el-col :span="24" class="content-wrapper">
-                        <transition name="fade" mode="out-in">
-                            <router-view></router-view>
-                        </transition>
-                    </el-col>
-                </div>
-            </section>
-        </el-col>
-    </el-row>
+      </aside>
+      <section class="content-container">
+          <div class="grid-content bg-purple-light">
+              <el-col :span="24" class="breadcrumb-container">
+                  <el-breadcrumb separator="/" class="breadcrumb-inner">
+                      <el-breadcrumb-item v-for="item in $route.matched" :key="item.path" :to="{ path: item.path }">
+                          {{ item.name }}
+                      </el-breadcrumb-item>
+                  </el-breadcrumb>
+              </el-col>
+              <el-col :span="24" class="content-wrapper">
+                  <transition name="fade" mode="out-in">
+                      <router-view></router-view>
+                  </transition>
+              </el-col>
+          </div>
+      </section>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -84,16 +98,16 @@ export default {
   data() {
     return {
       isCollapse: false,
-      sysName: 'kitty',
-      username: 'Louis',
+      sysName: 'jason',
+      username: 'jason',
       userAvatar: '',
       logo: '',
       activeIndex: '1'
     };
   },
   methods: {
-    handleopen() {
-      console.log('handleopen');
+    handleopen(index, indexPath) {
+      console.log('handleopen', index, indexPath);
     },
     handleclose() {
       console.log('handleclose');
@@ -104,6 +118,13 @@ export default {
     handleSelectHearNavBar(key, keyPath) {
       console.log(key, keyPath)
     },
+    // 语言切换
+    handleCommand(command) {
+      const lang = command === '' ? 'zh' : command
+      this.$i18n.locale = lang
+      console.log('语言切换为', lang)
+
+    },
     // 折叠导航栏
     collapse: function() {
       this.isCollapse = !this.isCollapse;
@@ -111,6 +132,7 @@ export default {
     // 退出登录
     logout: function() {
       // var _this = this;
+      console.log(this)
       this.$confirm('确认退出吗?', '提示', {
         type: 'warning'
       })
@@ -120,9 +142,11 @@ export default {
         })
         .catch(() => {});
     }
+
   },
   mounted() {
-    this.sysName = 'I like Kitty';
+    console.log(this.$route)
+    this.sysName = 'I like jason';
     this.logo = require('@/assets/logo.png');
     var user = sessionStorage.getItem('user');
     if (user) {
