@@ -21,13 +21,13 @@ module.exports = {
     'vue'
   ],
   rules: {
-    // 'vue/max-attributes-per-line': [2, {
-    //   'singleline': 10,
-    //   'multiline': {
-    //     'max': 1,
-    //     'allowFirstLine': false
-    //   }
-    // }],
+    'vue/max-attributes-per-line': [2, {
+      'singleline': 10,
+      'multiline': {
+        'max': 1,
+        'allowFirstLine': false
+      }
+    }],
     'vue/name-property-casing': ['error', 'PascalCase'],
     'accessor-pairs': 2, // 强制 getter 和 setter 在对象中成对出现
     'arrow-spacing': [2, {

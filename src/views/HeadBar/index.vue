@@ -36,8 +36,8 @@
           <!-- 语言切换 -->
           <li style="color:#fff;" class="fa fa-language fa-lg"></li>
           <el-popover ref="popover-lang" placement="bottom-start" trigger="click" v-model="langVisible">
-            <div class="lang-item" @click="changeLanguage('zh_cn')">简体中文</div>
-            <div class="lang-item" @click="changeLanguage('en_us')">English</div>
+            <div class="lang-item" @click="changeLanguage('zh')">简体中文</div>
+            <div class="lang-item" @click="changeLanguage('en')">English</div>
           </el-popover>
         </el-menu-item>
         <el-menu-item index="3" v-popover:popover-message>
@@ -119,7 +119,7 @@ export default {
     },
     // 语言切换
     changeLanguage(lang) {
-      lang === '' ? 'zh_cn' : lang
+      lang === '' ? 'zh' : lang
       this.$i18n.locale = lang
       this.langVisible = false
     }
