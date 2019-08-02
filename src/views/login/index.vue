@@ -41,7 +41,7 @@ export default {
   methods: {
     login() {
       const userInfo = { account: this.loginForm.account, password: this.loginForm.password }
-      this.$api.login(JSON.stringify(userInfo)).then((res) => {
+      this.$api.login.login(JSON.stringify(userInfo)).then((res) => {
         console.log('res', res)
 
         Cookies.set('token', res.data.token) // 放置token到Cookie

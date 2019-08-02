@@ -277,7 +277,7 @@
     right: 0;
     height: 0;
     bottom: 0;
-    border-bottom: 1px solid yellow; }
+    border-bottom: 1px solid blue; }
   .el-link.is-disabled {
     cursor: not-allowed; }
   .el-link [class*="el-icon-"] + span {
@@ -285,21 +285,21 @@
   .el-link.el-link--default {
     color: #606266; }
     .el-link.el-link--default:hover {
-      color: yellow; }
+      color: blue; }
     .el-link.el-link--default:after {
-      border-color: yellow; }
+      border-color: blue; }
     .el-link.el-link--default.is-disabled {
       color: #C0C4CC; }
   .el-link.el-link--primary {
-    color: yellow; }
+    color: blue; }
     .el-link.el-link--primary:hover {
-      color: #ffff33; }
+      color: #3333ff; }
     .el-link.el-link--primary:after {
-      border-color: yellow; }
+      border-color: blue; }
     .el-link.el-link--primary.is-disabled {
-      color: #ffff80; }
+      color: #8080ff; }
     .el-link.el-link--primary.is-underline:hover:after {
-      border-color: yellow; }
+      border-color: blue; }
   .el-link.el-link--danger {
     color: #F56C6C; }
     .el-link.el-link--danger:hover {

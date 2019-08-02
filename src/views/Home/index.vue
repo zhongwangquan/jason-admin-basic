@@ -1,8 +1,8 @@
 <template>
   <el-row class="container">
     <el-col :span="24" class="header">
-        <el-col :span="5" class="logo" :class="isCollapse?'logo-collapse-width':'logo-width'">
-          <img :src="this.logo" /> {{isCollapse?sysName:sysName}}
+        <el-col :span="5" class="logo" :class="$store.state.collapse?'logo-collapse-width':'logo-width'">
+          <img :src="this.logo" /> {{$store.state.collapse?"":sysName}}
         </el-col>
         <el-col :span="1">
             <div class="tools" @click.prevent="collapse">
@@ -52,7 +52,7 @@
     <el-col :span="24" class="main">
       <aside class="aside">
         <!--侧边栏菜单-->
-        <el-menu default-active="1-1" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect" :collapse="isCollapse">
+        <el-menu default-active="1-1" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect" :collapse="$store.state.collapse">
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -97,6 +97,8 @@
 
 <script>
 import ThemePicker from '@/components/ThemePicker'
+import { mapActions, mapState } from 'vuex'
+
 export default {
   name: 'Home',
   components: {
@@ -112,6 +114,7 @@ export default {
       activeIndex: '1'
     };
   },
+
   methods: {
     handleopen(index, indexPath) {
       console.log('handleopen', index, indexPath);
@@ -133,9 +136,7 @@ export default {
 
     },
     // 折叠导航栏
-    collapse: function() {
-      this.isCollapse = !this.isCollapse;
-    },
+    ...mapActions('app', ['collapse']),
     // 退出登录
     logout: function() {
       // var _this = this;
@@ -150,6 +151,9 @@ export default {
         .catch(() => {});
     }
 
+  },
+  computed: {
+    ...mapState('app', ['collapse'])
   },
   mounted() {
     console.log(this.$route)
