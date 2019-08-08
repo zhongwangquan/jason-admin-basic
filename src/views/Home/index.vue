@@ -1,8 +1,8 @@
 <template>
   <el-row class="container">
     <el-col :span="24" class="header">
-        <el-col :span="5" class="logo" :class="$store.state.collapse?'logo-collapse-width':'logo-width'">
-          <img :src="this.logo" /> {{$store.state.collapse?"":sysName}}
+        <el-col :span="5" class="logo" :class="getCollapse?'logo-collapse-width':'logo-width'">
+          <img :src="this.logo" /> {{getCollapse?"":sysName}}
         </el-col>
         <el-col :span="1">
             <div class="tools" @click.prevent="collapse">
@@ -52,8 +52,11 @@
     <el-col :span="24" class="main">
       <aside class="aside">
         <!--侧边栏菜单-->
-        <el-menu default-active="1-1" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect" :collapse="$store.state.collapse">
-          <el-submenu index="1">
+        <el-menu default-active="1-1" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect" :collapse="getCollapse">
+            <menu-tree v-for= 'item in  getMenuTree' :key='item.menuId' :menu="item">
+
+            </menu-tree>
+          <!-- <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span slot="title">系统管理</span>
@@ -72,7 +75,7 @@
           <el-menu-item index="4">
             <i class="el-icon-setting"></i>
             <span slot="title">导航四</span>
-          </el-menu-item>
+          </el-menu-item> -->
         </el-menu>
       </aside>
       <section class="content-container">
@@ -97,17 +100,20 @@
 
 <script>
 import ThemePicker from '@/components/ThemePicker'
-import { mapActions, mapState } from 'vuex'
+import MenuTree from '@/components/MenuTree'
+import { mapActions, mapState, mapGetters } from 'vuex'
+import { isURL } from '@/utils/validate'
 
 export default {
   name: 'Home',
   components: {
-    ThemePicker
+    ThemePicker,
+    MenuTree
   },
   data() {
     return {
       isCollapse: false,
-      sysName: 'jason',
+      sysName: 'I like jason',
       username: 'jason',
       userAvatar: '',
       logo: '',
@@ -116,6 +122,70 @@ export default {
   },
 
   methods: {
+    addDynamicMenuRoutes(menuList=[], routes=[]) {
+        var temp = []
+        for(var i =0; i<menuList.length;i++) {
+            if(menuList[i].children && menuList[i].children.length >=1) {
+                temp = temp.concat(menuList[i].children) 
+            } else if (menuList[i].url && /\S/.test(menuList[i].url)) {
+                // 转译符号 \  ,只要开头匹配到/  ,则替换成''
+                menuList[i].url=menuList[i].url.replace(/^\//, '')
+                var route = {
+                    path: menuList[i].url,
+                    component: null,
+                    name: menuList[i].name,
+                    meta: {
+                        menuId: menuList[i].menuId,
+                        title: menuList[i].title,
+                        idDynamic: true,
+                        idTab: true,
+                        iframeUrl: 'true'
+
+                    }
+                }
+                // url以http[s]://开头, 通过iframe展示
+                if (isURL(menuList[i].url)) {
+                    route['path'] = menuList[i].url
+                    route['name'] = menuList[i].name
+                    route['meta']['iframeUrl'] = menuList[i].url
+                } else {
+                    try {
+                    // 根据菜单URL动态加载vue组件，这里要求vue组件须按照url路径存储
+                    // 如url="sys/user"，则组件路径应是"@/views/sys/user.vue",否则组件加载不到
+                    let array = menuList[i].url.split('/')
+                    let url = array[0].substring(0,1).toUpperCase()+array[0].substring(1) + '/' + array[1].substring(0,1).toUpperCase()+array[1]  .substring(1)
+                    route['component'] = resolve => require([`@/views/${url}`], resolve)
+                    } catch (e) {}
+                }
+                routes.push(route)
+            }
+        }
+        if (temp.length >= 1) {
+            this.addDynamicMenuRoutes(temp, routes)
+        } else {
+            console.log(routes)
+        }
+        console.log('routed', routes)
+        return routes
+    },
+    findMentTree() {
+        this.$api.menu.findMenuTree()
+        .then(res=>{
+            // this.menuTree(res.data)
+            let routes = this.addDynamicMenuRoutes(res.data)
+            console.log('$router', this.$router)
+            // routes.forEach((item, index)=>{
+            //     this.$router.options.routes[0].children.push(routes[index])
+            // })
+            for(var i = 0; i < routes.length; i++) {
+                this.$router.options.routes[0].children.push(routes[i])
+            }
+            this.$router.addRoutes(this.$router.options.routes)
+            // console.log('$router', this.$router)
+        }).catch(err=>{
+            console.log('res', err)
+        })
+    },
     handleopen(index, indexPath) {
       console.log('handleopen', index, indexPath);
     },
@@ -136,7 +206,7 @@ export default {
 
     },
     // 折叠导航栏
-    ...mapActions('app', ['collapse']),
+    ...mapActions('app', ['collapse', 'menuTree']),
     // 退出登录
     logout: function() {
       // var _this = this;
@@ -153,11 +223,23 @@ export default {
 
   },
   computed: {
-    ...mapState('app', ['collapse'])
+    // ...mapState({
+    //     getCollapse: state => state.app.collapse
+    // })
+    // getCollapse(){
+    //     return this.$store.getters['app/getCollapse']
+    // }
+    ...mapGetters('app',
+        [
+            'getCollapse', 
+            'getMenuTree'
+        ])
   },
   mounted() {
     console.log(this.$route)
-    this.sysName = 'I like jason';
+    console.log('this', this)
+    this.findMentTree()
+    // this.sysName = 'I like jason';
     this.logo = require('@/assets/logo.png');
     var user = sessionStorage.getItem('user');
     if (user) {
