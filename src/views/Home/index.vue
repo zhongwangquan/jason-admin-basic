@@ -53,15 +53,15 @@
       <aside class="aside">
         <!--侧边栏菜单-->
         <el-menu default-active="1-1" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect" :collapse="getCollapse">
-            <menu-tree v-for= 'item in  getMenuTree' :key='item.menuId' :menu="item">
+            <!-- <menu-tree v-for= 'item in  getMenuTree' :key='item.menuId' :menu="item">
 
-            </menu-tree>
-          <!-- <el-submenu index="1">
+            </menu-tree> -->
+          <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span slot="title">系统管理</span>
             </template>
-            <el-menu-item index="1-1" @click="$router.push('user')">{{$t('sys.userMng')}}</el-menu-item>
+            <el-menu-item index="1-1" @click="$router.push('/home/sys/user')">{{$t('sys.userMng')}}</el-menu-item>
             <el-menu-item index="1-2" @click="$router.push('menu')">{{$t('sys.menuMng')}}</el-menu-item>
           </el-submenu>
           <el-menu-item index="2">
@@ -75,7 +75,7 @@
           <el-menu-item index="4">
             <i class="el-icon-setting"></i>
             <span slot="title">导航四</span>
-          </el-menu-item> -->
+          </el-menu-item>
         </el-menu>
       </aside>
       <section class="content-container">
@@ -122,72 +122,72 @@ export default {
   },
 
   methods: {
-    addDynamicMenuRoutes (menuList = [], routes = []) {
-        console.log('getMenuRouteLoaded', getMenuRouteLoaded)
-        // if(getMenuRouteLoaded) {
-        //     console.log('动态路由菜单已经存在')
-        //     return
-        // }
-      var temp = []
-      for (var i = 0; i < menuList.length; i++) {
-        if (menuList[i].children && menuList[i].children.length >= 1) {
-          temp = temp.concat(menuList[i].children)
-        } else if (menuList[i].url && /\S/.test(menuList[i].url)) {
-          menuList[i].url = menuList[i].url.replace(/^\//, '')
-          // 创建路由配置
-          var route = {
-            path: menuList[i].url,
-            component: null,
-            name: menuList[i].name,
-            meta: {
-              menuId: menuList[i].menuId,
-              title: menuList[i].name,
-              isDynamic: true,
-              isTab: true,
-              iframeUrl: ''
-            }
-          }
-          // url以http[s]://开头, 通过iframe展示
-          if (isURL(menuList[i].url)) {
-            route['path'] = menuList[i].url
-            route['name'] = menuList[i].name
-            route['meta']['iframeUrl'] = menuList[i].url
-          } else {
-            try {
-              // 根据菜单URL动态加载vue组件，这里要求vue组件须按照url路径存储
-              // 如url="sys/user"，则组件路径应是"@/views/sys/user.vue",否则组件加载不到
-              let array = menuList[i].url.split('/')
-              let url = array[0].substring(0,1).toUpperCase()+array[0].substring(1) + '/' + array[1].substring(0,1).toUpperCase()+array[1]  .substring(1)
-              route['component'] = resolve => require([`@/views/${url}`], resolve)
-            } catch (e) {}
-          }
-          routes.push(route)
-        }
-      }
-      if (temp.length >= 1) {
-        this.addDynamicMenuRoutes(temp, routes)
-      } else {
-        console.log(routes)
-      }
-      return routes
-    },
-    findMentTree() {
-        this.$api.menu.findMenuTree()
-        .then(res=>{
-            // this.menuTree(res.data)
-            this.menuTree(res.data)
-            this.menuRouteLoaded(true)
-            // 添加动态路由
-            let routes = this.addDynamicMenuRoutes(res.data)
-            for(var i = 0; i < routes.length; i++) {
-                this.$router.options.routes[0].children.push(routes[i])
-            }
-            this.$router.addRoutes(this.$router.options.routes);
-            console.log('$router', this.$router)
-        }).catch(err=>{
-            console.log('res', err)
-        })
-    },
+    // addDynamicMenuRoutes (menuList = [], routes = []) {
+    //     console.log('getMenuRouteLoaded', this.$store.state.app.menuRouteLoaded)
+    //     if(this.$store.state.app.menuRouteLoaded) {
+    //         console.log('动态路由菜单已经存在')
+    //         return
+    //     }
+    //   var temp = []
+    //   for (var i = 0; i < menuList.length; i++) {
+    //     if (menuList[i].children && menuList[i].children.length >= 1) {
+    //       temp = temp.concat(menuList[i].children)
+    //     } else if (menuList[i].url && /\S/.test(menuList[i].url)) {
+    //       menuList[i].url = menuList[i].url.replace(/^\//, '')
+    //       // 创建路由配置
+    //       var route = {
+    //         path: menuList[i].url,
+    //         component: null,
+    //         name: menuList[i].name,
+    //         meta: {
+    //           menuId: menuList[i].menuId,
+    //           title: menuList[i].name,
+    //           isDynamic: true,
+    //           isTab: true,
+    //           iframeUrl: ''
+    //         }
+    //       }
+    //       // url以http[s]://开头, 通过iframe展示
+    //       if (isURL(menuList[i].url)) {
+    //         route['path'] = menuList[i].url
+    //         route['name'] = menuList[i].name
+    //         route['meta']['iframeUrl'] = menuList[i].url
+    //       } else {
+    //         try {
+    //           // 根据菜单URL动态加载vue组件，这里要求vue组件须按照url路径存储
+    //           // 如url="sys/user"，则组件路径应是"@/views/sys/user.vue",否则组件加载不到
+    //           let array = menuList[i].url.split('/')
+    //           let url = array[0].substring(0,1).toUpperCase()+array[0].substring(1) + '/' + array[1].substring(0,1).toUpperCase()+array[1]  .substring(1)
+    //           route['component'] = resolve => require([`@/views/${url}`], resolve)
+    //         } catch (e) {}
+    //       }
+    //       routes.push(route)
+    //     }
+    //   }
+    //   if (temp.length >= 1) {
+    //     this.addDynamicMenuRoutes(temp, routes)
+    //   } else {
+    //     console.log(routes)
+    //   }
+    //   return routes
+    // },
+    // findMentTree() {
+    //     this.$api.menu.findMenuTree()
+    //     .then(res=>{
+    //         // this.menuTree(res.data)
+    //         this.menuTree(res.data)
+    //         this.menuRouteLoaded(true)
+    //         // 添加动态路由
+    //         let routes = this.addDynamicMenuRoutes(res.data)
+    //         for(var i = 0; i < routes.length; i++) {
+    //             this.$router.options.routes[1].children.push(routes[i])
+    //         }
+    //         this.$router.addRoutes(this.$router.options.routes);
+    //         console.log('$router', this.$router)
+    //     }).catch(err=>{
+    //         console.log('res', err)
+    //     })
+    // },
     ...mapActions('app', ['collapse', 'menuTree', 'menuRouteLoaded']),
     handleopen(index, indexPath) {
       console.log('handleopen', index, indexPath);
@@ -241,7 +241,7 @@ export default {
   mounted() {
     console.log(this.$route)
     console.log('this', this)
-    this.findMentTree()
+    // this.findMentTree()
     // this.sysName = 'I like jason';
     this.logo = require('@/assets/logo.png');
     var user = sessionStorage.getItem('user');
