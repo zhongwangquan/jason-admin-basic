@@ -1,7 +1,8 @@
 export default {
     state: {
         collapse: false,
-        menuTree: {}
+        menuTree: {},
+        menuRouteLoaded: false
     },
     actions: {
         collapse({ commit }) {
@@ -10,6 +11,13 @@ export default {
         menuTree({ commit }, payload) {
             let action = {
                 type: 'menuTree',
+                payload
+            }
+            commit(action)
+        },
+        menuRouteLoaded({ commit }, payload) {
+            let action = {
+                type: 'menuRouteLoaded',
                 payload
             }
             commit(action)
@@ -22,6 +30,10 @@ export default {
         menuTree(state, action) {
 
             state.menuTree = action.payload
+        },
+        menuRouteLoaded(state, action) {
+
+            state.menuRouteLoaded = action.payload
         }
     },
     getters: {
@@ -30,6 +42,9 @@ export default {
         },    
         getMenuTree(state){// 对应着上面state
             return state.menuTree;
+        },
+        getMenuRouteLoaded(state){// 对应着上面state
+            return state.menuRouteLoaded;
         }
     },
     namespaced: true
